@@ -1,24 +1,15 @@
 ﻿#include <VirtualWire.h>
 #include <TinyGPS++.h>
 #include <TinyGPSPlus.h>
-#include <FS.h>
-#include <FSImpl.h>
-#include <vfs_api.h>
-#include <dummy.h>
-#include <DFRobot_BMP388_SPI.h>
-#include <bmp3_defs.h>
-#include <DFRobot_BMP388.h>
 #include <DFRobot_BMP388_I2C.h>
 #include <DFRobot_BMX160.h>
 #include "Arduino.h"
 #include <WiFi.h>
-#include <WiFiClient.h> 
-#include <ESP32_FTPClient.h>
+#include "ESP32FtpServer.h"
 #include <EEPROM.h>
-#include <WiFiUdp.h>
 #include <ESP32Time.h>
 #include <Math.h>
-#include <SD.h>
+#include <SD_MMC.h>
 #include <Wire.h>
 
 
@@ -34,14 +25,13 @@
 #define GPS_RX_PIN 12 
 #define GPS_TX_PIN 13
 
-#define PRO_TX_PIN 24
-#define PRO_RX_PIN 25
 
-#define SD_CARD_PIN 8
+#define SD_CS 5
+#define SDSPEED 40000000
 
 #define RF_RX_PIN 13// BELIRLENMEDİ  HATA VERMESİN DİYE RASTGELE YAZDIM
 
-#define SD_PIN 19
+
 
 #define ARDUINO_RX_PIN 25
 #define ARDUINO_TX_PIN 24
@@ -90,10 +80,7 @@ SoftwareSerial ss(GPS_RX_PIN, GPS_TX_PIN);//gps uart
 SoftwareSerial ss1(ARDUINO_RX_PIN, ARDUINO_TX_PIN);//ARDUINO UART
 
 
-
-
-//FTP bilgilerini filezilla uzerinden olusturduktan sonra, alinan server username ve password bilgilerini yer istasyonuna aktar (13.01.23)
-ESP32_FTPClient ftp(ftp_server, ftp_user, ftp_pass, 5000, 2);
+FtpServer ftp;
 
 DFRobot_BMX160 bmx160;
 DFRobot_BMP388_I2C bmp388;
@@ -120,11 +107,7 @@ void setup()
     vw_setup(4000);
     vw_rx_start();
     
-    //SD KART KONTROLÜ
-    if (!SD.begin(SD_PIN)) {
-        Serial.println("Sd failure!!");
-        while (true);
-    }
+    
 
     //ZAMAN SET
     rtc.setTime(30, 24, 15, 17, 1, 2042);  // 17th Jan 2021 15:24:30
@@ -139,23 +122,27 @@ void setup()
     Serial.print("IP address: "); //cmd'deki IP adresiyle ayni olup olmadigini kontrol et (15.01.23)
     Serial.println(WiFi.localIP());
 
+    //SD KART KONTROLÜ
+    if (SD_MMC.begin()) {//ensure SD is started before ftp;
+        ftp.begin(ftp_user,ftp_pass);//username, password for ftp.  set ports in ESP32FtpServer.h  (default 21, 50009 for PASV)
+    }
+    else {
+        Serial.println("SD CARD FAILURE");
+    }
 
-    ftp.OpenConnection();
-    ftp.ChangeWorkDir("C:/Users/metin/Desktop/FTP_TEST/TEST FOLDER");
-    ftp.InitFile("TEST-PAYLOAD I");
-    ftp.NewFile("telemetri.csv"); //CSV uzantisi ile kaydediyoruz (calismazsa .txt'yi kullan (18.01.23))
-    ftp.CloseConnection();
+
+    
     
     if (bmx160.begin() != true) //Ivmeolcer sensorunun initialize edilip edilmedigini kontrol ediyoruz
     {
-        Serial.println("init false");
+        Serial.println("bmx160 failure");
         while (1);
     }
 
     bmp388.set_iic_addr(BMP3_I2C_ADDR_SEC);
     while (bmp388.begin()) //Ayni islemi basinc sensorumuz icin yapiyoruz
     {
-        Serial.println("Initialize error!");
+        Serial.println("BMP388 ERROR");
         delay(1000);
     }
     delay(100);
@@ -180,14 +167,11 @@ void setup()
 
 }
 void sendTelemetry() {
-    createTelemetryString();
-    createTelemetryFile();
-    unsigned char* data_ptr = (unsigned char*)telemetryString.c_str();
-    ftp.OpenConnection();
-    ftp.WriteData(data_ptr, sizeof(data_ptr));
-    ftp.CloseConnection();
     EEPROM.put(0, ++packageNo);
     EEPROM.commit();
+    createTelemetryString();
+    createTelemetryFile();
+   
 
 }
 
@@ -316,7 +300,7 @@ void createTelemetryString() {
 
 void createTelemetryFile() {
 
-    telemetryFile = SD.open("telemetryFile.csv", FILE_APPEND);
+    telemetryFile = SD_MMC.open("telemetryFile.csv", FILE_APPEND);
     
 
     if (telemetryFile) {
@@ -408,7 +392,7 @@ void state() {
 
     uint8_t lastState = EEPROM.read(1);
 
-    if(lastState==0)
+    
     
 
 
@@ -425,6 +409,7 @@ void loop()
 
     readTelemetry();
     state();
+    ftp.handleFTP();//checks for sd card
     
 
     
@@ -432,6 +417,5 @@ void loop()
     
     
     
- 
-    //ftp.CloseConnection(); FTP baglantisini sonlandirir. Yer istasyonundan gelen komuta gore kullanim olabilir (19.01.23)
+
 }

@@ -13,6 +13,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyGPSPlus-1.0.3", "..\..\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirtualWire-master-0.0.0", "..\..\..\Documents\Arduino\libraries\VirtualWire-master\VirtualWire-master-0.0.0.vcxitems", "{566DEB91-4B4A-4AEC-9DD7-B5DC7C9E1F16}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_MMC-2.0.0", "..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.7\libraries\SD_MMC\SD_MMC-2.0.0.vcxitems", "{A6032803-8EC7-4822-BBDE-9D6D8FECB0B4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ESP32_FTPClient-master-0.1.4", "..\..\..\Documents\Arduino\libraries\ESP32_FTPClient-master\ESP32_FTPClient-master-0.1.4.vcxitems", "{490029CA-0D18-49F5-A9D4-B47CC84AC22D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -57,10 +61,13 @@ Global
 		SolutionGuid = {AF68B473-F065-469A-8946-493ECF276335}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\..\..\Documents\Arduino\libraries\ESP32_FTPClient-master\ESP32_FTPClient-master-0.1.4.vcxitems*{490029ca-0d18-49f5-a9d4-b47cc84ac22d}*SharedItemsImports = 9
 		..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.7\libraries\FS\FS-2.0.0.vcxitems*{5430ae5b-edc1-4a57-bfa9-57bd89478b96}*SharedItemsImports = 9
 		..\..\..\Documents\Arduino\libraries\VirtualWire-master\VirtualWire-master-0.0.0.vcxitems*{566deb91-4b4a-4aec-9dd7-b5dc7c9e1f16}*SharedItemsImports = 9
+		..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.7\libraries\SD_MMC\SD_MMC-2.0.0.vcxitems*{a6032803-8ec7-4822-bbde-9d6d8fecb0b4}*SharedItemsImports = 9
 		..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.7\libraries\ESP32\ESP32-2.0.0.vcxitems*{c04117ad-a384-4c38-bde6-d473190709f1}*SharedItemsImports = 4
 		..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.7\libraries\FS\FS-2.0.0.vcxitems*{c04117ad-a384-4c38-bde6-d473190709f1}*SharedItemsImports = 4
+		..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.7\libraries\SD_MMC\SD_MMC-2.0.0.vcxitems*{c04117ad-a384-4c38-bde6-d473190709f1}*SharedItemsImports = 4
 		..\..\..\Documents\Arduino\libraries\TinyGPSPlus\TinyGPSPlus-1.0.3.vcxitems*{c04117ad-a384-4c38-bde6-d473190709f1}*SharedItemsImports = 4
 		..\..\..\Documents\Arduino\libraries\VirtualWire-master\VirtualWire-master-0.0.0.vcxitems*{c04117ad-a384-4c38-bde6-d473190709f1}*SharedItemsImports = 4
 		..\..\..\Documents\Arduino\libraries\TinyGPSPlus\TinyGPSPlus-1.0.3.vcxitems*{d6b31a0d-3ff8-4b5a-9220-0e2ba1b59eba}*SharedItemsImports = 9
