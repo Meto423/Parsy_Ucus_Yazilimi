@@ -74,6 +74,7 @@ bool landing;
 bool seperated;
 bool landed;
 
+
 ESP32Time rtc(3600);
 TinyGPSPlus gps;
 SoftwareSerial ss(GPS_RX_PIN, GPS_TX_PIN);//gps uart
@@ -222,6 +223,8 @@ void listenRF() {//container'dan gelecek basınç bilgisi
         pressure2 = atof(str) * 100.0F;
 
     }
+    
+    
 }
 
 
@@ -404,12 +407,24 @@ void state() {
 
 }
 
+
+bool checkSeperationFile() {
+
+    if (SD_MMC.open(ayril.txt)) {
+        return true;
+   }
+    return false;
+}
+
+
 void loop()
 {
 
     readTelemetry();
     state();
     ftp.handleFTP();//checks for sd card
+
+    
     
 
     
